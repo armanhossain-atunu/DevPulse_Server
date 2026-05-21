@@ -5,7 +5,7 @@ export type User = {
   id: number;
   name: string;
   email: string;
-  passwordHash: string;
+  passwordhash: string;
   role: Role;
   created_at: Date;
   updated_at: Date;
@@ -13,7 +13,7 @@ export type User = {
 
 export type RUser = Omit<
   User,
-  "id" | "passwordHash" | "created_at" | "updated_at"
+  "id" | "passwordhash" | "created_at" | "updated_at"
 >;
 
 export type Issue = {

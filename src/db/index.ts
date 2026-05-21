@@ -10,7 +10,7 @@ export const initDB=async()=>{
         name VARCHAR(75) NOT NULL,
         email VARCHAR(255) NOT NULL UNIQUE,
         role VARCHAR(50) NOT NULL,
-        passwordHash TEXT NOT NULL,
+        passwordhash TEXT NOT NULL,
         created_at TIMESTAMP NOT NULL DEFAULT NOW(),
         updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 
