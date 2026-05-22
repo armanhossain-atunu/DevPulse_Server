@@ -6,11 +6,14 @@ import express, {
 import { logger } from "./middleware/logger";
 import globalErrorHandler from "./middleware/globalErrorHandler";
 import authRouter from "./api/router/auth.router";
+import cookies from "cookie-parser";
 
 const app: Application = express();
 
 app.use(logger);
+app.use(cookies());
 app.use(express.json());
+
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Hello World!");

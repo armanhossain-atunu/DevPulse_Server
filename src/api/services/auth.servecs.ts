@@ -21,11 +21,16 @@ RETURNING id, name, email, role, created_at, updated_at
 SELECT * FROM users WHERE email = ${email}
 `;
     if (!res.length) return null; // User not found
-    const { passwordhash, ...user } = res[0] as User ;
+    const { passwordhash, ...user } = res[0] as User;
 
     const isValid = await bcrypt.compare(password, passwordhash);
     return isValid ? user : null; // Return user data if valid, otherwise null
-    
+  }
+  async getUserById(id: number) {
+    const res = await sql`
+SELECT id, name, email, role, created_at, updated_at FROM users WHERE id = ${id}
+`;
+    return res[0] as User & { id: number };
   }
 }
 

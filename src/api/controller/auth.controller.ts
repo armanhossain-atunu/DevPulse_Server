@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import authServecs from "../services/auth.servecs";
 import { sendResponse } from "../../utility/sendResponse";
-import { signToken } from "../../utility/jwt";
+import { signToken, verifyToken } from "../../utility/jwt";
 // user registration
 export const signup = async (req: Request, res: Response) => {
   const { name, email, password, role } = req.body;
@@ -14,11 +14,16 @@ export const signup = async (req: Request, res: Response) => {
       400,
     );
   }
-  sendResponse(res, { message: "User registered successfully", data: user }, 201);
+  sendResponse(
+    res,
+    { message: "User registered successfully", data: user },
+    201,
+  );
 };
+// user login
 export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
-  const user = await authServecs.validateUser(email,password)
+  const user = await authServecs.validateUser(email, password);
   if (!user) {
     return sendResponse(
       res,
@@ -27,12 +32,57 @@ export const login = async (req: Request, res: Response) => {
     );
   }
   const { accessToken, refreshToken } = signToken(user);
-  const result ={
+  res.cookie("refreshToken", refreshToken, {
+    sameSite: "lax",
+    httpOnly: true,
+    secure: true,
+  });
+  const result = {
     user,
     accessToken,
-    refreshToken
-   }
-   return sendResponse(res, { message: "Login successful", data: result }, 200);
+    refreshToken,
+  };
+  return sendResponse(res, { message: "Login successful", data: result }, 200);
+};
+// token refresh
+export const refresh = async (req: Request, res: Response) => {
+  const refreshToken = req.cookies?.refreshToken;
+  if (!refreshToken) {
+    return sendResponse(
+      res,
+      { message: "No refresh token provided", error: true },
+      400,
+    );
   }
-  // sendResponse(res, { message: "Login successful", data: { user, accessToken, refreshToken } }, 200);
+  // Here you would typically verify the refresh token and issue a new access token
+  const payload = verifyToken(refreshToken, "refresh");
+  console.log(payload);
+  if (!payload) {
+    return sendResponse(
+      res,
+      { message: "Invalid refresh token", error: true },
+      401,
+    );
+  }
+  const user = await authServecs.getUserById(payload.id);
+  if (!user) {
+    return sendResponse(
+      res,
+      { message: "User not found", error: true },
+      404,
+    );
+  }
+  const { accessToken, refreshToken: newRefreshToken } = signToken(user);
+  res.cookie("refreshToken", newRefreshToken, {
+    sameSite: "lax",
+    httpOnly: true,
+    secure: true,
+  });
+  sendResponse(
+    res,
+    { message: "Token refreshed successfully", data: { accessToken, newRefreshToken } },
+    200,
+  );
 
+
+};
