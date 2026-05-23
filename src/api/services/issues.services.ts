@@ -146,7 +146,7 @@ class issuesService {
     // update issue by id
     async updateIssueById(
       id: number,
-      updates: { title?: string; description?: string; type?: string }
+      updates: { title?: string; description?: string; type?: string; status?: string }
     ) {
       const issuesResult = await sql`
         SELECT * FROM issues WHERE id = ${id}
