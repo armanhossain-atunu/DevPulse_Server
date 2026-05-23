@@ -56,7 +56,7 @@ export const refresh = async (req: Request, res: Response) => {
   }
   // Here you would typically verify the refresh token and issue a new access token
   const payload = verifyToken(refreshToken, "refresh");
-  console.log(payload);
+  // console.log(payload);
   if (!payload) {
     return sendResponse(
       res,

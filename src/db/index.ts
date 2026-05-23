@@ -21,7 +21,8 @@ export const initDB=async()=>{
         title VARCHAR(150) NOT NULL,
         description TEXT NOT NULL,
         type VARCHAR(50) NOT NULL,
-        status VARCHAR(50) NOT NULL,
+        status VARCHAR(50)  DEFAULT 'open' 
+        CHECK (status IN ('open', 'in_progress', 'resolved')),
         reporter_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
         created_at TIMESTAMP NOT NULL DEFAULT NOW(),
         updated_at TIMESTAMP NOT NULL DEFAULT NOW()
